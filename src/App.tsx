@@ -1,19 +1,53 @@
 import { useState } from 'react';
-import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthScreen } from './components/AuthScreen';
+import { Dashboard } from './components/Dashboard';
 
-export default function App() {
-  const [started, setStarted] = useState(false);
+function AppContent() {
+  const { user, isLoading } = useAuth();
+  const [currentView, setCurrentView] = useState<'landing' | 'auth'>('landing');
 
-  const handleGetStarted = () => {
-    setStarted(true);
-  };
+  if (isLoading) {
+    return (
+      <div className="app-viewport">
+        <div className="phone-chassis">
+          <div className="phone-screen loading-screen">
+            <div className="loading-spinner" />
+            <p>RozKa Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  // If user is authenticated (online or offline), show Dashboard
+  if (user) {
+    return (
+      <div className="app-viewport">
+        <div className="phone-chassis dashboard-chassis">
+          <Dashboard />
+        </div>
+      </div>
+    );
+  }
+
+  // If user clicked Get Started, show the Auth screen (Image 1)
+  if (currentView === 'auth') {
+    return (
+      <div className="app-viewport">
+        <div className="phone-chassis">
+          <AuthScreen onBack={() => setCurrentView('landing')} />
+        </div>
+      </div>
+    );
+  }
+
+  // Default First Look (Image 2)
   return (
     <div className="app-viewport">
-      {/* Phone container mockup on desktop, native fullscreen on mobile */}
       <div className="phone-chassis">
         <div className="phone-screen">
-          {/* Main Content Overlay */}
           <div className="screen-content">
             {/* Header: Logo & Tagline */}
             <header className="header-section">
@@ -26,7 +60,7 @@ export default function App() {
               </p>
             </header>
 
-            {/* Middle Spacer ensuring store image remains in hero focus */}
+            {/* Middle Spacer */}
             <div className="store-hero-spacer" />
 
             {/* Lower Section: Handwritten Quote & CTA */}
@@ -39,7 +73,7 @@ export default function App() {
               <button
                 type="button"
                 className="cta-button"
-                onClick={handleGetStarted}
+                onClick={() => setCurrentView('auth')}
                 id="get-started-btn"
               >
                 <span>Get Started</span>
@@ -47,43 +81,16 @@ export default function App() {
               </button>
             </footer>
           </div>
-
-          {/* Optional modal when clicking Get Started */}
-          {started && (
-            <div className="welcome-modal-overlay">
-              <div className="welcome-modal-card fade-in">
-                <div className="modal-badge">
-                  <Sparkles size={18} />
-                  <span>RozKa Store Engine</span>
-                </div>
-                <h2>Aapka Swagat Hai!</h2>
-                <p>Welcome to RozKa — offline-first inventory &amp; billing for smart retailers.</p>
-                <div className="modal-features">
-                  <div className="feature-item">
-                    <CheckCircle2 size={16} color="#0E4334" />
-                    <span>Works 100% Offline with IndexedDB</span>
-                  </div>
-                  <div className="feature-item">
-                    <CheckCircle2 size={16} color="#0E4334" />
-                    <span>Quick Sales &amp; Stock Deduction</span>
-                  </div>
-                  <div className="feature-item">
-                    <CheckCircle2 size={16} color="#0E4334" />
-                    <span>Smart Reorder &amp; Supplier Lists</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="modal-close-btn"
-                  onClick={() => setStarted(false)}
-                >
-                  Theek Hai / Continue
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

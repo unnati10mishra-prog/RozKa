@@ -7,7 +7,7 @@ interface AuthScreenProps {
   onSuccess?: () => void;
 }
 
-export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSuccess }) => {
+export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess }) => {
   const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -27,7 +27,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
     try {
       if (mode === 'signin') {
         if (!identifier.trim() || !password) {
-          setErrorMsg('Please enter your phone number/email and password.');
+          setErrorMsg('Please enter your phone number or email and password.');
           setLoading(false);
           return;
         }
@@ -75,35 +75,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
 
   return (
     <div className="auth-screen-container">
-      {/* Decorative Natural Vines & Street Lamp */}
-      <div className="auth-top-decoration">
-        {/* Left Hanging Leaves */}
-        <svg className="vines-left" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M-10 -5C20 10 45 35 60 20C75 5 105 28 125 15C135 8 138 2 140 0" stroke="#365314" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M22 10C28 2 40 4 43 14C37 17 28 16 22 10Z" fill="#4D7C0F" />
-          <path d="M52 18C59 10 70 12 72 22C65 24 57 23 52 18Z" fill="#3F6212" />
-          <path d="M82 14C89 6 100 8 102 18C95 20 87 19 82 14Z" fill="#65A30D" />
-          <path d="M110 16C117 9 127 12 128 21C122 23 115 21 110 16Z" fill="#4D7C0F" />
-          <path d="M38 24C44 17 55 19 57 28C51 30 43 29 38 24Z" fill="#365314" />
-        </svg>
-
-        {/* Right Hanging Vintage Street Lamp & Branch */}
-        <svg className="lamp-right" viewBox="0 0 110 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Branch */}
-          <path d="M110 -5C85 8 70 20 60 12C50 4 35 18 30 25" stroke="#365314" strokeWidth="2" strokeLinecap="round" />
-          <path d="M75 8C80 2 90 4 92 12C86 14 79 13 75 8Z" fill="#4D7C0F" />
-          <path d="M48 10C53 4 63 6 65 14C59 16 52 15 48 10Z" fill="#65A30D" />
-          {/* Lamp post bracket */}
-          <path d="M110 32C85 32 72 45 72 62V72" stroke="#292524" strokeWidth="3" strokeLinecap="round" />
-          <path d="M54 72H90L82 86H62L54 72Z" fill="#1C1917" stroke="#292524" strokeWidth="2" />
-          <circle cx="72" cy="88" r="8" fill="#FDE047" opacity="0.95" />
-          <circle cx="72" cy="88" r="16" fill="#FEF08A" opacity="0.25" />
-        </svg>
-      </div>
-
-      {/* Main Content Area */}
       <div className="auth-content-body">
-        {/* Brand Header */}
+        {/* Brand Logo & Subtitle */}
         <div className="auth-brand">
           <h1 className="auth-brand-logo">
             <span className="logo-roz">Roz</span>
@@ -112,7 +85,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
           <p className="auth-brand-tagline">Har roz ka hisaab, aasan.</p>
         </div>
 
-        {/* Welcome Text */}
+        {/* Welcome Section */}
         <div className="auth-heading-block">
           <h2 className="auth-title">
             {mode === 'signin' ? 'Welcome to RozKa' : 'Create Shop Account'}
@@ -131,7 +104,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
           </div>
         )}
 
-        {/* Auth Form */}
+        {/* Form Fields */}
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'signup' && (
             <>
@@ -215,7 +188,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
           <span>or continue with</span>
         </div>
 
-        {/* Google OAuth Button */}
+        {/* Continue with Google */}
         <button
           type="button"
           className="auth-google-btn"
@@ -243,7 +216,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
           <span>Continue with Google</span>
         </button>
 
-        {/* Toggle between Sign In and Sign Up */}
+        {/* Create an account / Switch to Sign In */}
         <button
           type="button"
           className="auth-secondary-btn"
@@ -259,15 +232,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onBack: _onBack, onSucce
         <p className="auth-terms">
           By continuing, you agree to our <a href="#terms">Terms</a> &amp; <a href="#privacy">Privacy Policy</a>.
         </p>
-      </div>
-
-      {/* Bottom Store Illustration */}
-      <div className="auth-bottom-store">
-        <img
-          src="/store-bg.jpg"
-          alt="RozKa Store"
-          className="auth-store-img"
-        />
       </div>
     </div>
   );

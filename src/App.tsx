@@ -1,12 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AuthScreen } from './components/AuthScreen';
 import { Dashboard } from './components/Dashboard';
+import { PublicLanding } from './components/PublicLanding';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsOfService } from './components/TermsOfService';
 
 function AppContent() {
   const { user, isLoading } = useAuth();
-  const [currentView, setCurrentView] = useState<'landing' | 'auth'>('landing');
+  const [route, setRoute] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
+      if (hash.includes('privacy') || path.endsWith('/privacy')) return 'privacy';
+      if (hash.includes('terms') || path.endsWith('/terms')) return 'terms';
+      if (hash.includes('auth') || hash.includes('login') || hash.includes('signup')) return 'auth';
+      if (hash.includes('mobile-landing')) return 'mobile-landing';
+    }
+    return 'public';
+  });
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
+      if (hash.includes('privacy') || path.endsWith('/privacy')) {
+        setRoute('privacy');
+      } else if (hash.includes('terms') || path.endsWith('/terms')) {
+        setRoute('terms');
+      } else if (hash.includes('auth') || hash.includes('login') || hash.includes('signup')) {
+        setRoute('auth');
+      } else if (hash.includes('mobile-landing')) {
+        setRoute('mobile-landing');
+      } else if (hash.includes('app') || hash.includes('dashboard')) {
+        setRoute('app');
+      } else {
+        setRoute('public');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   if (isLoading) {
     return (
@@ -21,7 +57,17 @@ function AppContent() {
     );
   }
 
-  // If user is authenticated (online or offline), show Dashboard
+  // 1. Full Privacy Policy (Google OAuth Review Requirement)
+  if (route === 'privacy') {
+    return <PrivacyPolicy onBack={() => { window.location.hash = ''; setRoute('public'); }} />;
+  }
+
+  // 2. Full Terms of Service
+  if (route === 'terms') {
+    return <TermsOfService onBack={() => { window.location.hash = ''; setRoute('public'); }} />;
+  }
+
+  // 3. If user is authenticated, render the 8-Screen OMG Dashboard
   if (user) {
     return (
       <div className="app-viewport">
@@ -32,58 +78,67 @@ function AppContent() {
     );
   }
 
-  // If user clicked Get Started, show the Auth screen (Image 1)
-  if (currentView === 'auth') {
+  // 4. Auth Screen (Sign In & Sign Up)
+  if (route === 'auth') {
     return (
       <div className="app-viewport">
         <div className="phone-chassis">
-          <AuthScreen onBack={() => setCurrentView('landing')} />
+          <AuthScreen
+            onBack={() => { window.location.hash = ''; setRoute('public'); }}
+            onSuccess={() => { window.location.hash = '#dashboard'; }}
+          />
         </div>
       </div>
     );
   }
 
-  // Default First Look (Image 2)
-  return (
-    <div className="app-viewport">
-      <div className="phone-chassis">
-        <div className="phone-screen">
-          <div className="screen-content">
-            {/* Header: Logo & Tagline */}
-            <header className="header-section">
-              <h1 className="brand-logo">
-                <span className="logo-roz">Roz</span>
-                <span className="logo-ka">Ka</span>
-              </h1>
-              <p className="brand-tagline">
-                Roz ka hisaab. Business ka sukoon.
-              </p>
-            </header>
+  // 5. Mobile Landing Screen (Screen 1 from mockup)
+  if (route === 'mobile-landing') {
+    return (
+      <div className="app-viewport">
+        <div className="phone-chassis">
+          <div className="phone-screen">
+            <div className="screen-content">
+              <header className="header-section">
+                <h1 className="brand-logo">
+                  <span className="logo-roz">Roz</span>
+                  <span className="logo-ka">Ka</span>
+                </h1>
+                <p className="brand-tagline">Roz ka hisaab. Business ka sukoon.</p>
+              </header>
 
-            {/* Middle Spacer */}
-            <div className="store-hero-spacer" />
+              <div className="store-hero-spacer" />
 
-            {/* Lower Section: Handwritten Quote & CTA */}
-            <footer className="footer-section">
-              <div className="quote-container">
-                <span className="quote-line">Badi soch</span>
-                <span className="quote-line">har chhoti dukaan ke liye.</span>
-              </div>
+              <footer className="footer-section">
+                <div className="quote-container">
+                  <span className="quote-line">Badi soch</span>
+                  <span className="quote-line">har chhoti dukaan ke liye.</span>
+                </div>
 
-              <button
-                type="button"
-                className="cta-button"
-                onClick={() => setCurrentView('auth')}
-                id="get-started-btn"
-              >
-                <span>Get Started</span>
-                <ArrowRight size={20} className="cta-arrow" />
-              </button>
-            </footer>
+                <button
+                  type="button"
+                  className="cta-button"
+                  onClick={() => { window.location.hash = '#auth'; setRoute('auth'); }}
+                  id="get-started-btn"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight size={20} className="cta-arrow" />
+                </button>
+              </footer>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  // 6. Public Home Page (Accessible without login for Google OAuth Verification Compliance)
+  return (
+    <PublicLanding
+      onEnterApp={() => { window.location.hash = '#auth'; setRoute('auth'); }}
+      onOpenPrivacy={() => { window.location.hash = '#privacy'; setRoute('privacy'); }}
+      onOpenTerms={() => { window.location.hash = '#terms'; setRoute('terms'); }}
+    />
   );
 }
 

@@ -1,0 +1,17 @@
+{
+  "name": "RozKa - Everyday Stock Management",
+  "short_name": "RozKa",
+  "description": "Offline-first stock and inventory management for neighbourhood retailers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F17",
+  "theme_color": "#0F766E",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

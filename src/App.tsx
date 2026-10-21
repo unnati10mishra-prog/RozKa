@@ -1,93 +1,87 @@
-import { PackageCheck, Sparkles, Store } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
+  const [started, setStarted] = useState(false);
+
+  const handleGetStarted = () => {
+    setStarted(true);
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      textAlign: 'center'
-    }}>
-      <div style={{
-        maxWidth: '520px',
-        padding: '36px',
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border-subtle)',
-        borderRadius: '16px',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.4)'
-      }}>
-        <div style={{
-          width: '56px',
-          height: '56px',
-          margin: '0 auto 20px',
-          borderRadius: '12px',
-          background: 'rgba(16, 185, 129, 0.12)',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--primary-500)'
-        }}>
-          <Store size={28} />
-        </div>
+    <div className="app-viewport">
+      {/* Phone container mockup on desktop, native fullscreen on mobile */}
+      <div className="phone-chassis">
+        <div className="phone-screen">
+          {/* Main Content Overlay */}
+          <div className="screen-content">
+            {/* Header: Logo & Tagline */}
+            <header className="header-section">
+              <h1 className="brand-logo">
+                <span className="logo-roz">Roz</span>
+                <span className="logo-ka">Ka</span>
+              </h1>
+              <p className="brand-tagline">
+                Roz ka hisaab. Business ka sukoon.
+              </p>
+            </header>
 
-        <h1 style={{
-          fontSize: '28px',
-          fontWeight: 700,
-          color: 'var(--text-primary)',
-          marginBottom: '8px',
-          letterSpacing: '-0.5px'
-        }}>
-          RozKa
-        </h1>
+            {/* Middle Spacer ensuring store image remains in hero focus */}
+            <div className="store-hero-spacer" />
 
-        <p style={{
-          fontSize: '15px',
-          color: 'var(--primary-500)',
-          fontWeight: 600,
-          marginBottom: '16px',
-          fontFamily: 'var(--font-hindi)'
-        }}>
-          रोज़ का हिसाब, बिज़नेस का सुकून
-        </p>
+            {/* Lower Section: Handwritten Quote & CTA */}
+            <footer className="footer-section">
+              <div className="quote-container">
+                <span className="quote-line">Badi soch</span>
+                <span className="quote-line">har chhoti dukaan ke liye.</span>
+              </div>
 
-        <p style={{
-          fontSize: '14px',
-          color: 'var(--text-secondary)',
-          lineHeight: 1.6,
-          marginBottom: '28px'
-        }}>
-          Everyday stock &amp; inventory management built for neighbourhood retailers.
-          The project shell is initialized and ready for building.
-        </p>
-
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
-          textAlign: 'left',
-          background: 'var(--bg-surface-elevated)',
-          padding: '16px',
-          borderRadius: '10px',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
-          fontSize: '13px',
-          color: 'var(--text-secondary)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <PackageCheck size={16} color="var(--primary-500)" />
-            <span>React + TypeScript + Vite configured</span>
+              <button
+                type="button"
+                className="cta-button"
+                onClick={handleGetStarted}
+                id="get-started-btn"
+              >
+                <span>Get Started</span>
+                <ArrowRight size={20} className="cta-arrow" />
+              </button>
+            </footer>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <PackageCheck size={16} color="var(--primary-500)" />
-            <span>PWA &amp; Offline manifest ready</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Sparkles size={16} color="var(--accent-amber)" />
-            <span>Data models defined in <code>src/types/index.ts</code></span>
-          </div>
+
+          {/* Optional modal when clicking Get Started */}
+          {started && (
+            <div className="welcome-modal-overlay">
+              <div className="welcome-modal-card fade-in">
+                <div className="modal-badge">
+                  <Sparkles size={18} />
+                  <span>RozKa Store Engine</span>
+                </div>
+                <h2>Aapka Swagat Hai!</h2>
+                <p>Welcome to RozKa — offline-first inventory &amp; billing for smart retailers.</p>
+                <div className="modal-features">
+                  <div className="feature-item">
+                    <CheckCircle2 size={16} color="#0E4334" />
+                    <span>Works 100% Offline with IndexedDB</span>
+                  </div>
+                  <div className="feature-item">
+                    <CheckCircle2 size={16} color="#0E4334" />
+                    <span>Quick Sales &amp; Stock Deduction</span>
+                  </div>
+                  <div className="feature-item">
+                    <CheckCircle2 size={16} color="#0E4334" />
+                    <span>Smart Reorder &amp; Supplier Lists</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="modal-close-btn"
+                  onClick={() => setStarted(false)}
+                >
+                  Theek Hai / Continue
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
